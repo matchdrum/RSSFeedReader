@@ -1,50 +1,100 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: unratified template → 1.0.0
+Modified principles: template placeholders replaced with five project-specific principles
+Added sections: Additional Constraints; Development Workflow
+Removed sections: none
+Follow-up TODOs: none.
+-->
+# RSS Feed Reader Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. User Value and Scope
+Changes MUST directly support the agreed product phase and a stated user outcome.
+The MVP is limited to adding feed subscriptions by URL and displaying the list.
+Feed fetching, item display, persistence, and other later-phase features MUST remain
+deferred until that scope is explicitly advanced. This keeps the proof of concept
+focused and prevents unrequested complexity.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Security and Privacy
+Input crossing a trust boundary MUST be treated as untrusted. Features that fetch
+user-supplied feeds MUST validate destinations and redirects to prevent access to
+local or private network resources, and MUST report failures without exposing
+secrets or sensitive diagnostics. Feed content MUST be displayed as text unless it
+has been safely sanitized for its rendering context. Secrets MUST NOT be committed,
+and network access, permissions, and cross-origin access MUST be limited to what
+the active product phase requires. The MVP performs no feed fetching, so these
+fetching safeguards apply when that capability is introduced. All API endpoints MUST validate
+inputs before processing (URL format validation, lenght limits, null checks) and is specific and actionable.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Maintainability
+Code MUST keep user-interface responsibilities, application behavior, and data
+access clearly separated. Changes MUST favor small, cohesive units and reuse
+existing project patterns. New dependencies or abstractions MUST solve a
+demonstrated need in the active scope; speculative extensibility is not a reason
+to add complexity. These rules keep the application understandable as it grows
+incrementally.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Code Quality and Verification
+Every behavior change MUST have verification appropriate to its risk and scope.
+Tests MUST cover changed user-visible behavior and relevant failure or boundary
+cases; integration checks MUST be added when a change crosses application
+boundaries. Before completion, contributors MUST run the relevant tests and build
+or validation checks, and MUST resolve failures caused by the change. Test code
+and production code MUST remain clear, consistent, and free of known defects
+introduced by the change.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Incremental Simplicity
+Implementation MUST meet current, agreed requirements without implementing
+deferred capabilities. In-memory storage and simple subscription-list behavior
+are acceptable for the MVP; persistence, automatic polling, rich content
+rendering, and advanced feed processing require explicit phase approval. Each
+increment MUST preserve working behavior in other supported flows. This enables
+rapid delivery without blocking deliberate future evolution.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Additional Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- The application is a single-user, locally run proof of concept. Development
+  and verification MUST remain practical on Windows, macOS, and Linux where the
+  existing toolchain supports them.
+- The MVP MUST accept a feed URL and show the updated subscription list without
+  fetching, parsing, or persisting feed data. URL validation and network
+  operations MUST NOT be added to the MVP unless requirements are formally
+  changed.
+- Feed fetching, item display, and related error handling belong to the
+  Extended-MVP. Background polling, persistence, content rendering, and other
+  enhancements remain out of scope until separately approved.
+- Technology choices MUST remain consistent with the project technology-stack
+  document unless an approved change updates that document and its rationale.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Feature proposals and implementation MUST identify the product phase,
+  user-visible outcome, acceptance conditions, and any security or privacy
+  implications.
+- Changes MUST be reviewed against this constitution and the applicable product
+  documents. Review MUST verify scope, relevant tests, and security boundaries;
+  deviations require an explicit rationale and maintainer approval.
+- Contributors MUST run the smallest relevant test and build checks for each
+  change. Changes affecting API/UI integration MUST verify that integration,
+  including configuration and cross-origin behavior where applicable.
+- Documentation describing product scope, behavior, or technical decisions MUST
+  be updated when the corresponding approved behavior changes.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs feature specifications, plans, implementation, review,
+and release decisions. Amendments MUST state their rationale and scope, be
+approved by project maintainers, update the version and amendment date, and
+identify affected project documents and any migration needed for changed
+requirements.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Versioning follows semantic versioning: MAJOR for incompatible governance or
+principle changes, MINOR for new principles or materially expanded obligations,
+and PATCH for clarifications or non-semantic wording changes. Every specification
+and code review MUST check compliance with applicable principles. Any exception
+MUST be documented with its rationale, impact, and approval; security and privacy
+requirements cannot be waived without an explicit amendment.
+
+**Version**: 1.0.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
