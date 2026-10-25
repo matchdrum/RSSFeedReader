@@ -14,6 +14,7 @@
 
 - Q: Which URL schemes should the MVP accept as valid feed URLs? → A: Accept HTTP or HTTPS URLs only.
 - Q: Should subscriptions accept only HTTPS URLs, or both HTTP and HTTPS URLs? → A: Accept syntactically valid HTTP and HTTPS URLs.
+- Q: How should the MVP identify a duplicate URL? → A: Reject a URL when its trimmed string exactly matches an existing subscription.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -38,6 +39,9 @@ confirm the URL appears in the list without refreshing or restarting the app.
 3. **Given** one or more subscriptions have been added during the current
    session, **When** the user adds another feed URL, **Then** all previously
    added subscriptions remain visible along with the new one.
+4. **Given** a subscription is already in the list, **When** the user submits
+   the same URL again, **Then** the application identifies the duplicate and
+   leaves the list unchanged.
 
 ### Edge Cases
 
@@ -47,8 +51,9 @@ confirm the URL appears in the list without refreshing or restarting the app.
   application rejects it and leaves the subscription list unchanged.
 - When the user submits a URL using a scheme other than HTTP or HTTPS, the
   application rejects it and leaves the subscription list unchanged.
-- When the user adds the same URL more than once during a session, each
-  submission appears as a separate list entry.
+- When the user submits a URL whose trimmed string exactly matches an existing
+  subscription, the application rejects it, identifies it as a duplicate, and
+  leaves the list unchanged.
 - When the application closes, in-memory subscriptions are lost; reopening the
   application starts with an empty list.
 - A submitted URL may not identify a reachable or valid RSS/Atom feed. The MVP
@@ -73,8 +78,9 @@ confirm the URL appears in the list without refreshing or restarting the app.
   sessions as part of this MVP.
 - **FR-007**: The application MUST reject empty or whitespace-only input without
   changing the list.
-- **FR-008**: The application MUST treat repeated submissions of the same URL
-  as separate entries.
+- **FR-008**: The application MUST reject a URL when its trimmed string exactly
+  matches an existing subscription, communicate that it is a duplicate, and
+  leave the subscription list unchanged.
 - **FR-009**: The application MUST apply URL-format validation consistent with
   the project constitution and accept only syntactically valid HTTP or HTTPS
   URLs. It MUST reject URLs using any other scheme. It MUST NOT check whether a
@@ -82,9 +88,9 @@ confirm the URL appears in the list without refreshing or restarting the app.
 
 ### Key Entities
 
-- **Subscription**: A user-entered feed URL represented as one entry in the
-  current session's subscription list. Multiple entries may contain the same
-  URL.
+- **Subscription**: A user-entered feed URL represented as one unique entry in
+  the current session's subscription list. Duplicate trimmed URL strings are
+  not accepted.
 
 ## Success Criteria *(mandatory)*
 
@@ -92,8 +98,8 @@ confirm the URL appears in the list without refreshing or restarting the app.
 
 - **SC-001**: In acceptance testing, a user can add a URL and see the resulting
   subscription entry in the list within one second of submission.
-- **SC-002**: Every accepted subscription submission appears in the visible
-  list during the same session, including repeated submissions.
+- **SC-002**: Every accepted unique subscription appears exactly once in the
+  visible list during the same session.
 - **SC-003**: A first-time user can complete the add-and-view flow in under one
   minute without instructions.
 - **SC-004**: No feed content is fetched or displayed during any MVP
@@ -107,8 +113,9 @@ confirm the URL appears in the list without refreshing or restarting the app.
   subscriptions, persistence, feed fetching, item display, and background
   updates are deferred, as described in
   [AppFeatures.md](../../StakeholderDocuments/AppFeatures.md).
-- Each accepted submission creates a distinct list entry, including duplicate
-  URLs, to keep MVP behavior simple and predictable.
+- Duplicate detection compares the submitted URL after trimming surrounding
+  whitespace with existing trimmed URL strings using exact string equality.
+  URLs that differ in spelling or normalization are not treated as duplicates.
 - URL validation checks syntax only; it does not fetch the URL or verify that
   an HTTP or HTTPS URL serves RSS/Atom content.
 - The list is held for the current application session only and begins empty
