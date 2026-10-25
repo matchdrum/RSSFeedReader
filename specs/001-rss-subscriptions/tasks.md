@@ -29,11 +29,11 @@ delivery. This feature has one P1 user story.
 
 **Purpose**: Create the .NET solution and the planned API, UI, and test projects.
 
-- [ ] T001 Create the .NET 10 solution in `RSSFeedReader.sln` using the `.sln` solution format.
-- [ ] T002 [P] Create the ASP.NET Core Web API project targeting `net10.0` in `backend/RSSFeedReader.Api/RSSFeedReader.Api.csproj`.
-- [ ] T003 [P] Create the Blazor WebAssembly project targeting `net10.0` in `frontend/RSSFeedReader.UI/RSSFeedReader.UI.csproj`.
-- [ ] T004 [P] Create the xUnit test project targeting `net10.0` in `backend/RSSFeedReader.Api.Tests/RSSFeedReader.Api.Tests.csproj`.
-- [ ] T005 Add the API, UI, and test projects to `RSSFeedReader.sln`, add the API project reference, and add `Microsoft.AspNetCore.Mvc.Testing` to `backend/RSSFeedReader.Api.Tests/RSSFeedReader.Api.Tests.csproj`.
+- [X] T001 Create the .NET 10 solution in `RSSFeedReader.sln` using the `.sln` solution format.
+- [X] T002 [P] Create the ASP.NET Core Web API project targeting `net10.0` in `backend/RSSFeedReader.Api/RSSFeedReader.Api.csproj`.
+- [X] T003 [P] Create the Blazor WebAssembly project targeting `net10.0` in `frontend/RSSFeedReader.UI/RSSFeedReader.UI.csproj`.
+- [X] T004 [P] Create the xUnit test project targeting `net10.0` in `backend/RSSFeedReader.Api.Tests/RSSFeedReader.Api.Tests.csproj`.
+- [X] T005 Add the API, UI, and test projects to `RSSFeedReader.sln`, add the API project reference, and add `Microsoft.AspNetCore.Mvc.Testing` to `backend/RSSFeedReader.Api.Tests/RSSFeedReader.Api.Tests.csproj`.
 
 ## Phase 2: Foundational
 
@@ -41,10 +41,10 @@ delivery. This feature has one P1 user story.
 
 **Checkpoint**: Complete this phase before implementing the subscription flow.
 
-- [ ] T006 Configure the API in `backend/RSSFeedReader.Api/Program.cs` to allow CORS only from the configured local frontend origin.
-- [ ] T007 Configure the UI API base URL in `frontend/RSSFeedReader.UI/wwwroot/appsettings.json` to match the API launch URL.
-- [ ] T008 Remove unused template pages `frontend/RSSFeedReader.UI/Pages/Home.razor`, `frontend/RSSFeedReader.UI/Pages/Counter.razor`, and `frontend/RSSFeedReader.UI/Pages/Weather.razor`, and remove their links from `frontend/RSSFeedReader.UI/Layout/NavMenu.razor`.
-- [ ] T009 Build `RSSFeedReader.sln` and verify that exactly one page in `frontend/RSSFeedReader.UI/Pages/` declares the root route `@page "/"`.
+- [X] T006 Configure the API in `backend/RSSFeedReader.Api/Program.cs` to allow CORS only from the configured local frontend origin.
+- [X] T007 Configure the UI API base URL in `frontend/RSSFeedReader.UI/wwwroot/appsettings.json` to match the API launch URL.
+- [X] T008 Remove the unused `Counter` and `Weather` UI demos in `frontend/RSSFeedReader.UI/Pages/Counter.razor` and `frontend/RSSFeedReader.UI/Pages/Weather.razor`, remove their links and the sample About link from `frontend/RSSFeedReader.UI/Layout/NavMenu.razor` and `frontend/RSSFeedReader.UI/Layout/MainLayout.razor`, retain `Home.razor` as the single root page to repurpose for subscriptions, and remove the generated API weather demo in `backend/RSSFeedReader.Api/Controllers/WeatherForecastController.cs` and `backend/RSSFeedReader.Api/WeatherForecast.cs`.
+- [X] T009 Build `RSSFeedReader.sln` and verify that exactly one page in `frontend/RSSFeedReader.UI/Pages/` declares the root route `@page "/"`.
 
 ## Phase 3: User Story 1 - Add and View Subscriptions (Priority: P1)
 
@@ -58,20 +58,20 @@ rejected, and a new API process starts with an empty list.
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add `SubscriptionStore` unit tests in `backend/RSSFeedReader.Api.Tests/SubscriptionStoreTests.cs` for initial empty state, insertion order, successful unique adds, exact trimmed-string duplicate rejection, and unchanged state after duplicates.
-- [ ] T011 [P] [US1] Add HTTP integration tests in `backend/RSSFeedReader.Api.Tests/SubscriptionsApiTests.cs` for GET and POST responses, duplicate status `409 Conflict`, and invalid input status `400 Bad Request` according to `specs/001-rss-subscriptions/contracts/subscriptions-api.md`.
-- [ ] T012 [P] [US1] Add URL validation boundary tests in `backend/RSSFeedReader.Api.Tests/SubscriptionUrlValidationTests.cs` for null, empty, whitespace-only, malformed, relative, hostless, non-HTTP(S), and over-2048-character values, plus valid HTTP and HTTPS URLs.
+- [X] T010 [P] [US1] Add `SubscriptionStore` unit tests in `backend/RSSFeedReader.Api.Tests/SubscriptionStoreTests.cs` for initial empty state, insertion order, successful unique adds, exact trimmed-string duplicate rejection, and unchanged state after duplicates.
+- [X] T011 [P] [US1] Add HTTP integration tests in `backend/RSSFeedReader.Api.Tests/SubscriptionsApiTests.cs` for GET and POST responses, duplicate status `409 Conflict`, and invalid input status `400 Bad Request` according to `specs/001-rss-subscriptions/contracts/subscriptions-api.md`.
+- [X] T012 [P] [US1] Add URL validation boundary tests in `backend/RSSFeedReader.Api.Tests/SubscriptionUrlValidationTests.cs` for null, empty, whitespace-only, malformed, relative, hostless, non-HTTP(S), and over-2048-character values, plus valid HTTP and HTTPS URLs.
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Define subscription request and response DTOs in `backend/RSSFeedReader.Api/Models/SubscriptionDto.cs`, including the required URL string and its 1–2048 character bound.
-- [ ] T014 [US1] Implement absolute URL validation in `backend/RSSFeedReader.Api/Models/SubscriptionUrlValidator.cs`, trimming surrounding whitespace and accepting only URLs with a non-empty host and `http` or `https` scheme.
-- [ ] T015 [US1] Implement the process-lifetime, insertion-ordered subscription collection in `backend/RSSFeedReader.Api/Services/SubscriptionStore.cs`; atomically reject a duplicate when the trimmed URL string exactly matches an existing value and leave state unchanged.
-- [ ] T016 [US1] Implement `GET /api/subscriptions` and `POST /api/subscriptions` in `backend/RSSFeedReader.Api/Controllers/SubscriptionsController.cs`, returning accepted entries, `409 Conflict` for duplicates, and `400 Bad Request` for invalid URLs without making network requests.
-- [ ] T017 [US1] Register the subscription store, controller routes, and automatic request validation in `backend/RSSFeedReader.Api/Program.cs`.
-- [ ] T018 [US1] Implement the configured API client and methods to list and add subscriptions in `frontend/RSSFeedReader.UI/Services/SubscriptionsApiClient.cs`.
-- [ ] T019 [US1] Implement the root subscription page in `frontend/RSSFeedReader.UI/Pages/Subscriptions.razor` with URL entry, add action, immediate list refresh after success, duplicate feedback, and invalid-input feedback.
-- [ ] T020 [US1] Update the navigation label for the root subscription page in `frontend/RSSFeedReader.UI/Layout/NavMenu.razor`.
+- [X] T013 [US1] Define subscription request and response DTOs in `backend/RSSFeedReader.Api/Models/SubscriptionDto.cs`; keep the incoming URL nullable for explicit missing-value validation and enforce its 1–2048 character bound in `SubscriptionUrlValidator`.
+- [X] T014 [US1] Implement absolute URL validation in `backend/RSSFeedReader.Api/Models/SubscriptionUrlValidator.cs`, trimming surrounding whitespace and accepting only URLs with a non-empty host and `http` or `https` scheme.
+- [X] T015 [US1] Implement the process-lifetime, insertion-ordered subscription collection in `backend/RSSFeedReader.Api/Services/SubscriptionStore.cs`; atomically reject a duplicate when the trimmed URL string exactly matches an existing value and leave state unchanged.
+- [X] T016 [US1] Implement `GET /api/subscriptions` and `POST /api/subscriptions` in `backend/RSSFeedReader.Api/Controllers/SubscriptionsController.cs`, returning accepted entries, `409 Conflict` for duplicates, and `400 Bad Request` for invalid URLs without making network requests.
+- [X] T017 [US1] Register the subscription store, controller routes, and subscription URL validation in `backend/RSSFeedReader.Api/Program.cs`.
+- [X] T018 [US1] Implement the configured API client and methods to list and add subscriptions in `frontend/RSSFeedReader.UI/Services/SubscriptionsApiClient.cs`.
+- [X] T019 [US1] Implement the root subscription page in `frontend/RSSFeedReader.UI/Pages/Home.razor` with URL entry, add action, immediate list update after success, duplicate feedback, and invalid-input feedback.
+- [X] T020 [US1] Update the navigation label for the root subscription page in `frontend/RSSFeedReader.UI/Layout/NavMenu.razor`.
 
 **Checkpoint**: User Story 1 is independently usable; unique valid URLs appear
 immediately, duplicates and invalid URLs leave the list unchanged, and feed
@@ -81,9 +81,9 @@ content is never fetched.
 
 **Purpose**: Verify the full local integration and the documented acceptance flow.
 
-- [ ] T021 Run the xUnit suite with `dotnet test backend/RSSFeedReader.Api.Tests/RSSFeedReader.Api.Tests.csproj` and fix failures in the affected files under `backend/RSSFeedReader.Api.Tests/`.
-- [ ] T022 Build the API and UI projects with `dotnet build backend/RSSFeedReader.Api/RSSFeedReader.Api.csproj` and `dotnet build frontend/RSSFeedReader.UI/RSSFeedReader.UI.csproj`.
-- [ ] T023 Run the API/UI acceptance scenarios in `specs/001-rss-subscriptions/quickstart.md`, verify the configured API URL and CORS origin, confirm duplicates are rejected and session data is lost after API restart, and confirm no feed URL is fetched.
+- [X] T021 Run the xUnit suite with `dotnet test backend/RSSFeedReader.Api.Tests/RSSFeedReader.Api.Tests.csproj` and fix failures in the affected files under `backend/RSSFeedReader.Api.Tests/`.
+- [X] T022 Build the API and UI projects with `dotnet build backend/RSSFeedReader.Api/RSSFeedReader.Api.csproj` and `dotnet build frontend/RSSFeedReader.UI/RSSFeedReader.UI.csproj`.
+- [X] T023 Run the API/UI acceptance scenarios in `specs/001-rss-subscriptions/quickstart.md`, verify the configured API URL and CORS origin, confirm duplicates are rejected and session data is lost after API restart, and confirm no feed URL is fetched.
 
 ## Dependencies & Execution Order
 

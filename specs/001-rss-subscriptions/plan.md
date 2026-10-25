@@ -34,8 +34,9 @@ browser UI communicating with local API
 **Performance Goals**: Adding a subscription and displaying the updated list
 within one second under local single-user use
 
-**Constraints**: Single-user proof of concept; only HTTP and HTTPS URL schemes;
-no feed fetching, parsing, persistence, or automatic refresh; application
+**Constraints**: Single-user proof of concept; local API traffic uses the
+configured localhost HTTP origin; only HTTP and HTTPS feed URL schemes; no feed
+fetching, parsing, persistence, or automatic refresh; application
 subscriptions are lost when the backend process stops. Limit submitted URLs to
 2048 characters as an explicit MVP bound, reject null/empty/whitespace input,
 and trim surrounding whitespace before validation. The API allows the exact

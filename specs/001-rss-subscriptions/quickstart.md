@@ -39,6 +39,9 @@ running backend, and the backend must allow the frontend origin through CORS.
 The stakeholder document gives default example ports of `5151` for the API and
 `5213` for the UI; confirm these match the generated launch settings and
 frontend configuration.
+The local UI configuration uses `http://localhost:5151/api/` and the HTTP
+launch profiles so browser validation does not depend on trusting a local
+development certificate.
 
 ## Acceptance checks
 

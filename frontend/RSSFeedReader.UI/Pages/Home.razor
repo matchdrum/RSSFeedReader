@@ -1,0 +1,97 @@
+﻿@page "/"
+@using RSSFeedReader.UI.Models
+@using RSSFeedReader.UI.Services
+@inject SubscriptionsApiClient SubscriptionsApi
+
+<PageTitle>Subscriptions</PageTitle>
+
+<h1>Subscriptions</h1>
+
+<form @onsubmit="AddSubscriptionAsync" @onsubmit:preventDefault>
+    <label for="subscription-url">Feed URL</label>
+    <input id="subscription-url"
+           type="text"
+           @bind="_url"
+           disabled="@_isSubmitting"
+           autocomplete="url" />
+    <button type="submit" disabled="@_isSubmitting">Add subscription</button>
+</form>
+
+@if (_message is not null)
+{
+    <p role="@(_isError ? "alert" : "status")">@_message</p>
+}
+
+<h2>Your feeds</h2>
+@if (_subscriptions.Count == 0)
+{
+    <p>No subscriptions yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var subscription in _subscriptions)
+        {
+            <li @key="subscription.Url">@subscription.Url</li>
+        }
+    </ul>
+}
+
+@code {
+    private readonly List<SubscriptionResponse> _subscriptions = [];
+    private string _url = string.Empty;
+    private string? _message;
+    private bool _isError;
+    private bool _isSubmitting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _subscriptions.AddRange(await SubscriptionsApi.GetAllAsync());
+        }
+        catch (HttpRequestException exception)
+        {
+            SetError($"Could not load subscriptions: {exception.Message}");
+        }
+    }
+
+    private async Task AddSubscriptionAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_url))
+        {
+            SetError("Enter a feed URL.");
+            return;
+        }
+
+        _isSubmitting = true;
+        _message = null;
+
+        try
+        {
+            var subscription = await SubscriptionsApi.AddAsync(_url);
+            _subscriptions.Add(subscription);
+            _url = string.Empty;
+            _isError = false;
+            _message = "Subscription added.";
+        }
+        catch (DuplicateSubscriptionException exception)
+        {
+            SetError(exception.Message);
+        }
+        catch (HttpRequestException exception)
+        {
+            SetError($"Could not add subscription: {exception.Message}");
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private void SetError(string message)
+    {
+        _isError = true;
+        _message = message;
+    }
+}
